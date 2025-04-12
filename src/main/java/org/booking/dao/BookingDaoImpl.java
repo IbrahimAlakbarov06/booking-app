@@ -11,7 +11,7 @@ public class BookingDaoImpl implements BookingDao {
     }
 
     @Override
-    public Booking getBookingById(String id) {
+    public Booking getBookingById(long id) {
         return null;
     }
 
