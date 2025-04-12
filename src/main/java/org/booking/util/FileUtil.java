@@ -1,16 +1,14 @@
 package org.booking.util;
 
-import org.booking.entity.Flight;
 import org.booking.exception.FlightBookingException;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class FileUtil {
 
-    public static <T extends Serializable> void saveToFile(String filePath, List<Flight> data) {
+    public static <T extends Serializable> void saveToFile(String filePath, List<T> data) {
         File file = new File(filePath);
 
         File parentDir = file.getParentFile();
@@ -43,7 +41,6 @@ public class FileUtil {
     public static boolean fileExists(String filePath) {
         return new File(filePath).exists();
     }
-
 
     public static void createBackup(String filePath) {
         if (!fileExists(filePath)) {

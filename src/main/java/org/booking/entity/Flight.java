@@ -1,11 +1,13 @@
 package org.booking.entity;
 
-
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Objects;
 
-public class Flight {
+public class Flight implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private long id;
     private String departureCity;
     private String destinationCity;

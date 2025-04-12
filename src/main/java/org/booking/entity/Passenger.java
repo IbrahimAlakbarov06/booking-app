@@ -1,12 +1,23 @@
 package org.booking.entity;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class Passenger {
+public class Passenger implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String firstName;
     private String lastName;
     private LocalDate birthDate;
+
+    public Passenger() {
+    }
+
+    public Passenger(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
 
     public Passenger(String firstName, String lastName, LocalDate birthDate) {
         this.firstName = firstName;
@@ -14,7 +25,6 @@ public class Passenger {
         this.birthDate = birthDate;
     }
 
-    // Getters and setters
     public String getFirstName() {
         return firstName;
     }

@@ -7,11 +7,20 @@ import java.util.List;
 
 public interface FlightDao {
     void loadFlights();
+
     void saveFlights();
 
-    public List<Flight> getAllFlights();
-    public Flight getFlightById(long id);
-    public List<Flight> getFlightsInNext24Hours();
-    public List<Flight> searchFlights(String destination, LocalDate date, int passengers);
-    public void updateFlight(Flight flight);
+    List<Flight> getAllFlights();
+
+    Flight getFlightById(long id);
+
+    List<Flight> getFlightsInNext24Hours();
+
+    List<Flight> searchFlights(String destination, LocalDate date, int passengers);
+
+    void addFlight(Flight flight);
+
+    void updateFlight(Flight flight);
+
+    void removeFlight(long flightId);
 }
