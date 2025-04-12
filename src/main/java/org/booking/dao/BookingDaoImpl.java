@@ -1,17 +1,17 @@
 package org.booking.dao;
 
 import org.booking.entity.Booking;
-import org.booking.entity.Passenger;
 import org.booking.exception.FlightBookingException;
 import org.booking.util.FileUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class BookingDaoImpl implements BookingDao {
     private List<Booking> bookings;
-    private String filePath;
+    private final String filePath;
 
     public BookingDaoImpl(String filePath) {
         this.filePath = filePath;
@@ -21,10 +21,8 @@ public class BookingDaoImpl implements BookingDao {
 
     public void loadBookings() {
         try {
-            this.bookings = FileUtil.loadFromFile(filePath);
-            if (this.bookings == null) {
-                this.bookings = new ArrayList<>();
-            }
+            List<Booking> loadedBookings = FileUtil.loadFromFile(filePath);
+            this.bookings = loadedBookings != null ? loadedBookings : new ArrayList<>();
         } catch (Exception e) {
             throw new FlightBookingException("Error loading bookings from file: " + e.getMessage());
         }
@@ -37,17 +35,23 @@ public class BookingDaoImpl implements BookingDao {
             throw new FlightBookingException("Error saving bookings to file: " + e.getMessage());
         }
     }
+
     @Override
     public List<Booking> getAllBookings() {
-        return List.of();
+        return new ArrayList<>(bookings);
     }
 
     @Override
     public Booking getBookingById(long id) {
-        return bookings.stream()
+        Optional<Booking> bookingOptional = bookings.stream()
                 .filter(booking -> booking.getId() == id)
-                .findFirst()
-                .orElseThrow(()-> new FlightBookingException("Booking with id " + id + " not found"));
+                .findFirst();
+
+        if (bookingOptional.isPresent()) {
+            return bookingOptional.get();
+        } else {
+            throw new FlightBookingException("Booking with id " + id + " not found");
+        }
     }
 
     @Override
@@ -56,7 +60,7 @@ public class BookingDaoImpl implements BookingDao {
 
         return bookings.stream()
                 .filter(booking -> booking.getPassengers().stream()
-                        .anyMatch(passenger -> passenger.getFullName().equals(fullName)))
+                        .anyMatch(passenger -> passenger.getFullName().equalsIgnoreCase(fullName)))
                 .collect(Collectors.toList());
     }
 
@@ -68,13 +72,13 @@ public class BookingDaoImpl implements BookingDao {
 
     @Override
     public void cancelBooking(long id) {
-        boolean removed = bookings.removeIf(booking -> booking.getId() == id);
+        int initialSize = bookings.size();
+        bookings.removeIf(booking -> booking.getId() == id);
 
-        if (removed) {
-            saveBookings();
-        } else {
-            throw new FlightBookingException("Booking with id " + id + " not found");
+        if (bookings.size() == initialSize) {
+            throw new FlightBookingException("Booking with id " + id + " not found for cancellation");
         }
 
+        saveBookings();
     }
 }
